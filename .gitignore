@@ -1,0 +1,8 @@
+# @author: Mohammad Asim
+
+
+dist/
+tensorflow3d.egg-info/
+
+.git
+.idea
