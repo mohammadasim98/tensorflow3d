@@ -8,4 +8,13 @@
     @author: Mohammad Asim
 
 """
-from .io import loader
+
+
+import unittest
+from tensorflow3d.tests import ReadPointCloudTestCase
+
+
+
+
+if __name__ == '__main__':
+    unittest.main()

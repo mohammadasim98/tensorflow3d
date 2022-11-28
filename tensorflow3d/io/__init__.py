@@ -8,4 +8,5 @@
     @author: Mohammad Asim
 
 """
-from .io import loader
+
+from .loader import loader

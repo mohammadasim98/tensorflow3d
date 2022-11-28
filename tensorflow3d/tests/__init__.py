@@ -8,4 +8,6 @@
     @author: Mohammad Asim
 
 """
-from .io import loader
+
+from .pointcloud_test import ReadPointCloudTestCase
+
