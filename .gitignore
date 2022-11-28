@@ -1,6 +1,7 @@
 # @author: Mohammad Asim
 
 __pycache__/
+**/__pycache__/
 
 dist/
 tensorflow3d.egg-info/
