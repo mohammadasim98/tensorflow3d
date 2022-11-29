@@ -10,7 +10,7 @@
 """
 
 import unittest
-from tensorflow3d.io import loader
+from tensorflow3d.io import Loader
 
 class ReadPointCloudTestCase(unittest.TestCase):
 
@@ -19,7 +19,7 @@ class ReadPointCloudTestCase(unittest.TestCase):
     """
     def test_ascii_file(self):
         print("...Testing point cloud ascii formats")
-        file = loader()
+        file = Loader()
 
         for format in file.format_value_list:
             if format != 'auto':

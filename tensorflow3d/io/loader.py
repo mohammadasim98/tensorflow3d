@@ -8,9 +8,9 @@
     @author: Mohammad Asim
 
 """
+import numpy as np
 
-
-class loader():
+class Loader():
     def __init__(self):
 
         self.format_key_list = ['point-cloud']
@@ -29,6 +29,7 @@ class loader():
 
         if (list(format.values())[-1] not in self.format_value_list):
             raise FormatError("Invalid format value")
+        return True
 
     def read_obj(self, path: str, format: dict):
         """
@@ -39,10 +40,24 @@ class loader():
         # Perform format verification
         self.verify(format)
 
+
         # Read file
         with open(path) as file:
             try:
-                self.raw = file.read()
+                points = []
+                while True:
+                    line = file.readline()
+                    if not line:
+                        break
+                    line = line.split(" ")
+                    if (len(line) == 3):
+                        xyz = list(np.array(line).astype(np.float))
+                        points.append(xyz)
+                    if (len(line) == 4):
+                        xyz = list(np.array(line[:3]).astype(np.float))
+                        points.append(xyz)
+                points = np.array(points)
+                print(points.shape)
                 return True
             except:
                 raise Exception('Unable to read file')
