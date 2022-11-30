@@ -8,3 +8,5 @@ tensorflow3d.egg-info/
 
 .git
 .idea
+.polyscope.ini
+imgui.ini
