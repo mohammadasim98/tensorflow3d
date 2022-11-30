@@ -9,4 +9,4 @@
 
 """
 
-from .loader import Loader
+from .pointcloud import PointCloud

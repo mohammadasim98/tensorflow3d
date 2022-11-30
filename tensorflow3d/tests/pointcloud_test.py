@@ -10,7 +10,7 @@
 """
 
 import unittest
-from tensorflow3d.io import loader
+from tensorflow3d.representation import PointCloud
 
 class ReadPointCloudTestCase(unittest.TestCase):
 
@@ -19,17 +19,16 @@ class ReadPointCloudTestCase(unittest.TestCase):
     """
     def test_ascii_file(self):
         print("...Testing point cloud ascii formats")
-        file = loader()
+        pcd = PointCloud()
 
-        for format in file.format_value_list:
-            if format != 'auto':
-                print(f"   *** Result for {format}: ", end='')
-                try:
-                    result = file.read_obj(path=f"tensorflow3d/tests/formats/ascii/{format}.txt", format={'point-cloud': format})
-                    if result:
-                        print("\u001b[1;32m PASSED\u001b[0m")
-                    else:
-                        print("\u001b[1;31m FAILED\u001b[0m")
-                    self.assertEqual(result, True)
-                except:
+        for format in ['xyz', 'xyzi']:
+            print(f"   *** Result for {format}: ", end='')
+            try:
+                result = pcd.load(f"tensorflow3d/tests/formats/ascii/{format}.txt", format=format)
+                if result:
+                    print("\u001b[1;32m PASSED\u001b[0m")
+                else:
                     print("\u001b[1;31m FAILED\u001b[0m")
+                self.assertEqual(result, True)
+            except:
+                print("\u001b[1;31m FAILED\u001b[0m")

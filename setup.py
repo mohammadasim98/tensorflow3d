@@ -12,6 +12,7 @@ setup(
   keywords = ['tensorflow3d', '3D Deep Learning'],
   install_requires=[
           'tensorflow',
+          'open3d'
       ],
   classifiers=[
     'Development Status :: 3 - Alpha',
