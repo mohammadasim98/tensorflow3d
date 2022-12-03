@@ -10,24 +10,23 @@
 """
 import numpy as np
 
-class Loader():
+
+class Loader:
     def __init__(self):
 
         self.format_key_list = ['point-cloud']
         self.format_value_list = ['xyz', 'xyzi', 'auto']
         self.raw = None
 
-
-
     def verify(self, format):
         """
             :ops: Check if the given format is applicable
             :return: None
         """
-        if (list(format.keys())[-1] not in self.format_key_list):
+        if list(format.keys())[-1] not in self.format_key_list:
             raise FormatError("Invalid format key")
 
-        if (list(format.values())[-1] not in self.format_value_list):
+        if list(format.values())[-1] not in self.format_value_list:
             raise FormatError("Invalid format value")
         return True
 
@@ -39,7 +38,6 @@ class Loader():
 
         # Perform format verification
         self.verify(format)
-
 
         # Read file
         with open(path) as file:
@@ -63,7 +61,7 @@ class Loader():
                 raise Exception('Unable to read file')
                 return False
 
+
 class FormatError(Exception):
     """ Raise exception on invalid format """
     pass
-

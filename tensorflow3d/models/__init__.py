@@ -8,7 +8,4 @@
     @author: Mohammad Asim
 
 """
-from .io import Loader
-from .representation import PointCloud
-from .layers import *
-from .models import *
+from .pointnet import PointNet

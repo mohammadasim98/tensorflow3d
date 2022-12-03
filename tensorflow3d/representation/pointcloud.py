@@ -11,40 +11,62 @@
 import polyscope as ps
 import numpy as np
 
-class PointCloud():
+
+class PointCloud:
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', None)
         self.points = kwargs.get('points', [])
         self.colors = kwargs.get('colors', [])
         self.values = kwargs.get('values', [])
+        self.normals = kwargs.get('normals', [])
 
-    def load(self, path, format: str='xyz'):
+    def load(self, path, mode: str = 'xyz'):
+        """
+        @inputs:
+            path: path to the file containing point cloud data
+            mode: stored point cloud data format
+        @return: bool
+        @ops: Load the data into points, colors, values or normals
+        """
+
         with open(path) as file:
             try:
                 line = file.readline()
-                line_length = len(line)
-                self.points = []
-                self.values = []
-                self.colors = []
                 while line:
                     line = line.split(" ")
                     line = list(np.array(line).astype(np.float))
-                    if format == 'xyzi':
+
+                    if mode == 'xyzi':
                         self.values.append(line[-1])
-                    elif format == 'xyzrgb':
+
+                    elif mode == 'xyzrgb':
                         self.colors.append(line[3:])
+
+                    elif mode == 'xyznxnynz':
+                        self.normals.append(line[3:])
+
                     self.points.append(line[:3])
                     line = file.readline()
 
                 self.points = np.array(self.points)
                 self.values = np.array(self.values)
                 self.colors = np.array(self.colors)
+                self.normals = np.array(self.normals)
+
                 return True
-            except:
+            except Exception:
                 raise Exception('Unable to read file')
+
                 return False
 
-    def render(self, name: str='default'):
+    def render(self, paths: list = [], name: str = 'default'):
+        """
+        @inputs:
+            name: name to the rendered plot
+        @return: none
+        @ops: render the point cloud including color, intensity value and surface normals
+        """
+
         ps.init()
         ps.set_up_dir("z_up")
 
