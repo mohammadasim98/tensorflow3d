@@ -34,39 +34,51 @@ class PointNet(tf.keras.Model):
             :shape: BxNxL
         @return: output of point net
         """
-
+        self.num_points = inputs.get_shape()[1]
         # BxNx3: Input Transformation
         net = TNet(name='input_transformation')(inputs)
         # BxNx3:
         net = tf.expand_dims(net, -1)
         # BxNx3x1:
-        net = Conv2D(filters=64, shape=[1, 3], name=self.id + 'tconv2d_64_0')(net)
-        net = Conv2D(filters=64, shape=[1, 1], name=self.id + 'tconv2d_64_1')(net)
+        net = Conv2D(filters=64, shape=[1, 3], name=self.id + '_tconv2d_64_0')(net)
+        net = Conv2D(filters=64, shape=[1, 1], name=self.id + '_tconv2d_64_1')(net)
         # BxNx1x64:
         net = tf.squeeze(net, axis=2)
         # BxNx64: Feature Transformation
         net = TNet(name='feature_transformation', k=64)(net)
         # BxNx64:
-        net = tf.expand_dims(net, 2)
+        local_net = tf.expand_dims(net, 2)
         # BxNx1x64:
-        net = Conv2D(filters=64, shape=[1, 1], name=self.id + 'tconv2d_64_2')(net)
-        net = Conv2D(filters=128, shape=[1, 1], name=self.id + 'tconv2d_128_0')(net)
-        net = Conv2D(filters=1024, shape=[1, 1], name=self.id + 'tconv2d_1024_0')(net)
+        net = Conv2D(filters=64, shape=[1, 1], name=self.id + '_tconv2d_64_2')(local_net)
+        net = Conv2D(filters=128, shape=[1, 1], name=self.id + '_tconv2d_128_0')(net)
+        net = Conv2D(filters=1024, shape=[1, 1], name=self.id + '_tconv2d_1024_0')(net)
         # BxNx1x1024: Symmetric function
-        net = MaxPool2D(name=self.id + 'tmaxpool2d')(net)
+        global_net = MaxPool2D(name=self.id + '_tmaxpool2d')(net)
         # Bx1x1x1024:
-        net = tf.keras.layers.Flatten()(net)
+        # global_net = tf.tile(global_net, [1, self.num_points, 1, 1])
+        # concat_net = tf.concat([local_net, global_net], axis=-1)
+        # # BxNx1x1088:
+        # net = Conv2D(filters=512, shape=[1, 1], name=self.id + 'tconv2d_512_0')(concat_net)
+        # net = Conv2D(filters=256, shape=[1, 1], name=self.id + 'tconv2d_256_0')(net)
+        # net = Conv2D(filters=128, shape=[1, 1], name=self.id + 'tconv2d_128_1')(net)
+        # net = Conv2D(filters=128, shape=[1, 1], name=self.id + 'tconv2d_128_2')(net)
+        # net = Conv2D(filters=50, shape=[1, 1], name=self.id + 'tconv2d_50_0')(net)
+        # # BxNx1x50:
+        # net = tf.squeeze(net, axis=2)
+        # # BxNx50:
+
+        net = tf.keras.layers.Flatten()(global_net)
         # Bx1024:
-        net = Dense(512, name=self.id + 'tdense_512')(net)
+        net = Dense(512, name=self.id + '_tdense_512')(net)
         # Bx512:
         net = tf.nn.dropout(net, 0.7, None)
-        net = Dense(256, name=self.id + 'tdense_256')(net)
+        net = Dense(256, name=self.id + '_tdense_256')(net)
         # Bx256:
         net = tf.nn.dropout(net, 0.7, None)
-        net = Dense(40, name=self.id + 'tdense_40')(net)
+        net = Dense(40, name=self.id + '_tdense_40')(net)
         # Bx40:
         return net
 
-    def build_graph(self, input_shape):
+    def build(self, input_shape):
         x = tf.keras.layers.Input(shape=input_shape)
         return tf.keras.models.Model(inputs=[x], outputs=self.call(x))

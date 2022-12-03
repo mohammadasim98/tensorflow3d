@@ -53,7 +53,7 @@ class PointCloud:
                 self.colors = np.array(self.colors)
                 self.normals = np.array(self.normals)
 
-                return True
+                return self
             except Exception:
                 raise Exception('Unable to read file')
 
