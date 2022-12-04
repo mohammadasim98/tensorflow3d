@@ -12,9 +12,24 @@ import tensorflow as tf
 
 
 class Dense(tf.keras.layers.Layer):
-
+    """
+    Customized Dense/Fully Connected Layer
+    """
     def __init__(self, num_outputs, name, kernel_initializer=tf.keras.initializers.RandomUniform(),
                  bias_initializer=tf.keras.initializers.Constant(0)):
+        """
+        @ops: Initialize parameters
+        @args:
+            num_outputs: Number of neurons
+                type: Int
+            name: Unique name for the layer
+                type: Str
+            kernel_initializer: Initializer for the kernel weights
+                type: KerasInitializer
+            bias_initializer: Initializer for the biases
+                type: KerasInitializer
+        @return: None
+        """
         super(Dense, self).__init__()
         self.bias = None
         self.kernel = None
@@ -24,6 +39,13 @@ class Dense(tf.keras.layers.Layer):
         self.bias_initializer = bias_initializer
 
     def build(self, input_shape):
+        """
+        @ops: Build the kernel and biases of the Dense layer
+        @args:
+            input_shape: Shape of the input
+                type: Tuple / List
+        @return: None
+        """
         kernel_shape = [input_shape[-1], self.num_outputs]
         self.kernel = tf.Variable(
             initial_value=self.kernel_initializer(shape=kernel_shape, dtype=tf.float32),
@@ -33,6 +55,16 @@ class Dense(tf.keras.layers.Layer):
             trainable=True)
 
     def call(self, inputs):
+        """
+        @ops: Perform matrix multiplication
+        @args:
+            inputs: Input point cloud
+                type: KerasTensor
+                shape: BxC
+        @return: Output node of Dense layer
+            type: KerasTensor
+            shape: BxC_
+        """
         net = tf.matmul(inputs, self.kernel)
         return tf.nn.bias_add(net, self.bias)
 

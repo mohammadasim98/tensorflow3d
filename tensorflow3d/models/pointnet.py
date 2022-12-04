@@ -13,28 +13,47 @@ from tensorflow3d.layers.conv2d import Conv2D
 from tensorflow3d.layers.maxpool2d import MaxPool2D
 from tensorflow3d.layers.dense import Dense
 from tensorflow3d.layers.tnet import TNet
-import numpy as np
 
 
 class PointNet(tf.keras.Model):
     """
-    Spatial Transformation layer
+    PointNet Model
     """
-
     def __init__(self, name):
+        """
+        @ops: Initialize PointNet
+        @args:
+            name: Unique name for the model
+                type: Str
+        @return: None
+        """
         super(PointNet, self).__init__()
         self.num_points = None
         self.id = name
-        self.batch_size = None
+
+    def build(self, input_shape):
+        """
+        @ops: Build the PointNet as a complete model
+        @args:
+            input_shape: Shape of the input
+                type: Tuple / List
+        @return: A tensorflow model
+            type: Functional model
+        """
+        self.num_points = input_shape[1]
+        x = tf.keras.layers.Input(shape=input_shape)
+        return tf.keras.models.Model(inputs=[x], outputs=self.call(x))
 
     def call(self, inputs):
         """
-        Call Point Net layer on inputs
-        @args: input point cloud
-            :shape: BxNxL
-        @return: output of point net
+        @ops: Call PointNet layer on inputs
+        @args:
+            inputs: Input point cloud
+                type: KerasTensor
+                shape: BxNxC
+        @return: Output node of PointNet
+            type: KerasTensor
         """
-        self.num_points = inputs.get_shape()[1]
         # BxNx3: Input Transformation
         net = TNet(name='input_transformation')(inputs)
         # BxNx3:
@@ -78,7 +97,3 @@ class PointNet(tf.keras.Model):
         net = Dense(40, name=self.id + '_tdense_40')(net)
         # Bx40:
         return net
-
-    def build(self, input_shape):
-        x = tf.keras.layers.Input(shape=input_shape)
-        return tf.keras.models.Model(inputs=[x], outputs=self.call(x))

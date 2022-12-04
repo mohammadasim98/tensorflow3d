@@ -17,11 +17,25 @@ import numpy as np
 
 class TNet(tf.keras.layers.Layer):
     """
-    Spatial Transformation layer
+    Transformation layer
     """
-
     def __init__(self, name, kernel_initializer=tf.keras.initializers.RandomUniform(),
                  bias_initializer=tf.keras.initializers.Constant(0), expand=True, k=3):
+        """
+        @ops: Initialize TNet parameters and layers
+        @args:
+            name: Unique name for the layer
+                type: Str
+            kernel_initializer: Initializer for the kernel weights
+                type: KerasInitializer
+            bias_initializer: Initializer for the biases
+                type: KerasInitializer
+            expand: Whether to expand the input dimensions
+                type: Bool
+            k: Size of the transformation matrix
+                type: Int
+        @return: None
+        """
         super(TNet, self).__init__()
         self.bias = None
         self.kernel = None
@@ -39,6 +53,13 @@ class TNet(tf.keras.layers.Layer):
         self.tdense_256 = Dense(256, name=self.id + '_tdense_256')
 
     def build(self, input_shape):
+        """
+        @ops: Build the kernel and biases of the TNet layer
+        @args:
+            input_shape: Shape of the input
+                type: Tuple / List
+        @return: None
+        """
         self.num_points = input_shape[1]
         self.batch_size = input_shape[0]
         self.kernel = tf.Variable(
@@ -52,10 +73,14 @@ class TNet(tf.keras.layers.Layer):
 
     def call(self, inputs):
         """
-        Call transformation layer on inputs and features
-        @args: input point cloud
-            :shape: BxNxL
-        @return: transformed point cloud
+        @ops: Call transformation layer on inputs or features
+        @args:
+            inputs: Input point cloud
+                type: KerasTensor
+                shape: BxNxC / BxNx1XC
+        @return: Output node of TNet
+            type: KerasTensor
+            shape: BxNxC
         """
         inp = inputs
         if self.expand:

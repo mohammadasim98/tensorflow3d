@@ -22,11 +22,14 @@ class PointCloud:
 
     def load(self, path, mode: str = 'xyz'):
         """
-        @inputs:
-            path: path to the file containing point cloud data
-            mode: stored point cloud data format
-        @return: bool
         @ops: Load the data into points, colors, values or normals
+        @args:
+            path: Path to the file containing point cloud data
+                type: Str
+            mode: Stored point cloud data format
+                type: Str
+        @return: A PointCloud object or a rejection
+            type: PointCloud / Bool
         """
 
         with open(path) as file:
@@ -61,10 +64,11 @@ class PointCloud:
 
     def render(self, paths: list = [], name: str = 'default'):
         """
-        @inputs:
-            name: name to the rendered plot
-        @return: none
-        @ops: render the point cloud including color, intensity value and surface normals
+        @ops: Render the point cloud including color, intensity value and surface normals
+        @args:
+            name: Name to the rendered plot
+                type: Str
+        @return: None
         """
 
         ps.init()
