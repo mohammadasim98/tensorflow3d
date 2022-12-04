@@ -11,40 +11,66 @@
 import polyscope as ps
 import numpy as np
 
-class PointCloud():
+
+class PointCloud:
     def __init__(self, **kwargs):
         self.name = kwargs.get('name', None)
         self.points = kwargs.get('points', [])
         self.colors = kwargs.get('colors', [])
         self.values = kwargs.get('values', [])
+        self.normals = kwargs.get('normals', [])
 
-    def load(self, path, format: str='xyz'):
+    def load(self, path, mode: str = 'xyz'):
+        """
+        @ops: Load the data into points, colors, values or normals
+        @args:
+            path: Path to the file containing point cloud data
+                type: Str
+            mode: Stored point cloud data format
+                type: Str
+        @return: A PointCloud object or a rejection
+            type: PointCloud / Bool
+        """
+
         with open(path) as file:
             try:
                 line = file.readline()
-                line_length = len(line)
-                self.points = []
-                self.values = []
-                self.colors = []
                 while line:
                     line = line.split(" ")
                     line = list(np.array(line).astype(np.float))
-                    if format == 'xyzi':
+
+                    if mode == 'xyzi':
                         self.values.append(line[-1])
-                    elif format == 'xyzrgb':
+
+                    elif mode == 'xyzrgb':
                         self.colors.append(line[3:])
+
+                    elif mode == 'xyznxnynz':
+                        self.normals.append(line[3:])
+
                     self.points.append(line[:3])
                     line = file.readline()
 
                 self.points = np.array(self.points)
                 self.values = np.array(self.values)
                 self.colors = np.array(self.colors)
-                return True
-            except:
+                self.normals = np.array(self.normals)
+
+                return self
+            except Exception:
                 raise Exception('Unable to read file')
+
                 return False
 
-    def render(self, name: str='default'):
+    def render(self, paths: list = [], name: str = 'default'):
+        """
+        @ops: Render the point cloud including color, intensity value and surface normals
+        @args:
+            name: Name to the rendered plot
+                type: Str
+        @return: None
+        """
+
         ps.init()
         ps.set_up_dir("z_up")
 

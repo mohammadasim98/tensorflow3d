@@ -8,7 +8,8 @@
     @author: Mohammad Asim
 
 """
-from .io import Loader
-from .representation import PointCloud
-from .layers import *
-from .models import *
+
+from .conv2d import Conv2D
+from .tnet import TNet
+from .maxpool2d import MaxPool2D
+from .dense import Dense
