@@ -13,6 +13,7 @@ from tensorflow3d.layers.conv2d import Conv2D
 from tensorflow3d.layers.maxpool2d import MaxPool2D
 from tensorflow3d.layers.dense import Dense
 from tensorflow3d.layers.tnet import TNet
+from tensorflow3d.layers.fps import FPS
 
 
 class PointNet(tf.keras.Model):
@@ -55,7 +56,9 @@ class PointNet(tf.keras.Model):
             type: KerasTensor
         """
         # BxNx3: Input Transformation
-        net = TNet(name='input_transformation')(inputs)
+        inp = inputs
+        fps = FPS(name='FPS', samples=1024)(inp)
+        net = TNet(name='input_transformation')(fps)
         # BxNx3:
         net = tf.expand_dims(net, -1)
         # BxNx3x1:
@@ -64,7 +67,7 @@ class PointNet(tf.keras.Model):
         # BxNx1x64:
         net = tf.squeeze(net, axis=2)
         # BxNx64: Feature Transformation
-        net = TNet(name='feature_transformation', k=64)(net)
+        net = TNet(name='feature_transformation', features=True, k=64)(net)
         # BxNx64:
         local_net = tf.expand_dims(net, 2)
         # BxNx1x64:
