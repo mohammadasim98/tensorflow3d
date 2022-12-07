@@ -56,9 +56,7 @@ class PointNet(tf.keras.Model):
             type: KerasTensor
         """
         # BxNx3: Input Transformation
-        inp = inputs
-        fps = FPS(name='FPS', samples=1024)(inp)
-        net = TNet(name='input_transformation')(fps)
+        net = TNet(name='input_transformation')(inputs)
         # BxNx3:
         net = tf.expand_dims(net, -1)
         # BxNx3x1:
