@@ -9,16 +9,15 @@
 
 """
 import tensorflow as tf
-from tensorflow3d.layers.conv2d import Conv2D
-from tensorflow3d.layers.maxpool2d import MaxPool2D
-from tensorflow3d.layers.dense import Dense
-from tensorflow3d.layers.tnet import TNet
+
+from tensorflow3d.layers import TNet, Conv2D, Dense, MaxPool2D
 
 
 class PointNet(tf.keras.Model):
     """
     PointNet Model
     """
+
     def __init__(self, name):
         """
         @ops: Initialize PointNet
@@ -64,7 +63,7 @@ class PointNet(tf.keras.Model):
         # BxNx1x64:
         net = tf.squeeze(net, axis=2)
         # BxNx64: Feature Transformation
-        net = TNet(name='feature_transformation', k=64)(net)
+        net = TNet(name='feature_transformation', features=True, k=64)(net)
         # BxNx64:
         local_net = tf.expand_dims(net, 2)
         # BxNx1x64:

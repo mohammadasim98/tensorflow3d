@@ -13,7 +13,7 @@ import tensorflow as tf
 
 class MaxPool2D(tf.keras.layers.Layer):
 
-    def __init__(self, name, strides=[1, 1, 1, 1], padding='VALID'):
+    def __init__(self, name, strides=None, padding='VALID'):
         """
         @ops: Initialize parameters
         @args:
@@ -26,6 +26,8 @@ class MaxPool2D(tf.keras.layers.Layer):
         @return: None
         """
         super(MaxPool2D, self).__init__()
+        if strides is None:
+            strides = [1, 1, 1, 1]
         self.shape = None
         self.id = name
         self.strides = strides
@@ -58,4 +60,3 @@ class MaxPool2D(tf.keras.layers.Layer):
                                     strides=self.strides, padding=self.padding)
         else:
             return tf.math.reduce_max(inputs, axis=1, keepdims=True)
-

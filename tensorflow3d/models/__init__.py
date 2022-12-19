@@ -9,3 +9,4 @@
 
 """
 from .pointnet import PointNet
+from .pointnet2 import PointNet2

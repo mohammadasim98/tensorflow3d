@@ -14,7 +14,7 @@ import tensorflow as tf
 class Conv2D(tf.keras.layers.Layer):
 
     def __init__(self, filters, shape, name, kernel_initializer=tf.keras.initializers.RandomNormal(),
-                 strides=[1, 1, 1, 1], padding='VALID'):
+                 strides=None, padding='VALID'):
         """
         @ops: Initialize parameters
         @args:
@@ -33,6 +33,8 @@ class Conv2D(tf.keras.layers.Layer):
         @return: None
         """
         super(Conv2D, self).__init__()
+        if strides is None:
+            strides = [1, 1, 1, 1]
         self.bias = None
         self.kernel = None
         self.id = name

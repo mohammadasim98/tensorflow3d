@@ -13,3 +13,4 @@ from .conv2d import Conv2D
 from .tnet import TNet
 from .maxpool2d import MaxPool2D
 from .dense import Dense
+from .fps import FPS
