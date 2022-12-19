@@ -9,17 +9,15 @@
 
 """
 import tensorflow as tf
-from tensorflow3d.layers.conv2d import Conv2D
-from tensorflow3d.layers.maxpool2d import MaxPool2D
-from tensorflow3d.layers.dense import Dense
-from tensorflow3d.layers.tnet import TNet
-from tensorflow3d.layers.fps import FPS
+
+from tensorflow3d.layers import TNet, Conv2D, Dense, MaxPool2D
 
 
 class PointNet(tf.keras.Model):
     """
     PointNet Model
     """
+
     def __init__(self, name):
         """
         @ops: Initialize PointNet

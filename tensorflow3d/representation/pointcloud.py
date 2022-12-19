@@ -19,6 +19,7 @@ class PointCloud:
         self.colors = kwargs.get('colors', [])
         self.values = kwargs.get('values', [])
         self.normals = kwargs.get('normals', [])
+        self.shape = ()
 
     def load(self, path, mode: str = 'xyz'):
         """
@@ -55,14 +56,25 @@ class PointCloud:
                 self.values = np.array(self.values)
                 self.colors = np.array(self.colors)
                 self.normals = np.array(self.normals)
-
+                self.shape = self.points.shape
                 return self
             except Exception:
                 raise Exception('Unable to read file')
 
                 return False
 
-    def render(self, paths: list = [], name: str = 'default'):
+    def sample(self, num: int = 1024):
+        randi = np.random.randint(0, high=len(self.points), size=num, dtype=int)
+        if self.points is not None or self.points != []:
+            self.points = self.points[randi]
+            self.shape = self.points.shape
+        if np.size(self.colors):
+            self.colors = self.colors[randi]
+
+        if np.size(self.values):
+            self.values = self.values[randi]
+
+    def render(self, paths: list = [], colors: bool = False, values: bool = False, name: str = 'default'):
         """
         @ops: Render the point cloud including color, intensity value and surface normals
         @args:
@@ -78,12 +90,11 @@ class PointCloud:
             ps_cloud = ps.register_point_cloud(name, self.points)
             ps_cloud.set_radius(0.00042)
 
-        if np.size(self.colors):
+        if colors:
             ps_cloud.add_color_quantity(name, self.colors)
 
-        if np.size(self.values):
+        if values:
             ps_cloud.add_scalar_quantity(name, self.values, enabled=True, cmap='turbo')
 
         ps.show()
         del ps_cloud
-
