@@ -12,6 +12,10 @@
 
 """
 import tensorflow as tf
+import os
+import sys
+
+from tensorflow3d.clib import farthest_point_sample
 
 
 class FPS(tf.keras.layers.Layer):
@@ -30,9 +34,6 @@ class FPS(tf.keras.layers.Layer):
         @return: None
         """
         super(FPS, self).__init__()
-        self.sampled = None
-        self.batch_size = None
-        self.num_points = None
         self.id = name
         self.samples = samples
 
@@ -48,45 +49,9 @@ class FPS(tf.keras.layers.Layer):
             type: KerasTensor
             shape: BxN_x3
         """
-        # I:BxNx3 :: O:Bx1xNx3:
-        t1 = tf.expand_dims(inputs, axis=1)
-        # I:BxNx3 :: O:BxNx1x3:
-        t2 = tf.expand_dims(inputs, axis=2)
-        # I:[Bx1xNx3, BxNx1x3] :: O:BxNxN :: Compute Distance Matrix
-        # By @Chris Tralie but modified by @Mohammad Asim
-
-        # I:B :: O:Bx1 :: Create Range on Batch Size
-        brange = tf.range(tf.shape(inputs)[0], dtype=tf.int32)
-        brange = tf.expand_dims(brange, axis=-1)
-        # I:BxN :: O:Bx1 :: Compute Index
-        idx = tf.math.argmax(ds, axis=-1, output_type=tf.int32)
-        idx = tf.expand_dims(idx, axis=-1)
-        # I:[Bx1, Bx1] :: O:Bx2 :: Concatenate Range and Index
-        idx_concat = tf.concat([brange, idx], axis=-1)
-        # I:[BxNx3, Bx2] :: O:Bx1x3 :: Get a sample
-        self.sampled = tf.expand_dims(tf.gather_nd(inputs, idx_concat), axis=1)
-        # I:BxNxN :: O:BxN :: Slice Distance Matrix
-        new_ds = tf.gather_nd(dist_matrix, indices=idx_concat)
-        # I:[BxN, BxN] :: O:BxN :: Get Minimum from Old and New Slices of Distance Matrix
-        ds = tf.math.minimum(ds, new_ds)
-
-        for i in range(1, self.samples):
-            # I:BxN :: O:Bx1 :: Compute Index
-            idx = tf.math.argmax(ds, axis=-1, output_type=tf.int32)
-            idx = tf.expand_dims(idx, axis=-1)
-            # I: [Bx1, Bx1]:: O: Bx2:: Concatenate Range and Index
-            idx_concat = tf.concat([brange, idx], axis=-1)
-            # I:[BxNx3, Bx2] :: O:BxTx3 :: Get new sample and concatenate with previous
-            self.sampled = tf.concat([
-                self.sampled,
-                tf.expand_dims(tf.gather_nd(inputs, idx_concat), axis=1)
-            ], axis=1)
-            # I:BxNxN :: O:BxN :: Slice Distance Matrix
-            new_ds = tf.gather_nd(dist_matrix, indices=idx_concat)
-            # I:[BxN, BxN] :: O:BxN :: Get Minimum from Old and New Slices of Distance Matrix
-            ds = tf.math.minimum(ds, new_ds)
-
-        return self.sampled
+        # I:BxNx3 :: O:BxN_x3:
+        result = farthest_point_sample(inputs, self.samples)
+        return result
 
 class FPS2(tf.keras.layers.Layer):
     """
@@ -103,7 +68,7 @@ class FPS2(tf.keras.layers.Layer):
                 type: Int
         @return: None
         """
-        super(FPS, self).__init__()
+        super(FPS2, self).__init__()
         self.sampled = None
         self.batch_size = None
         self.num_points = None

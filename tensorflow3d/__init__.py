@@ -12,3 +12,4 @@ from .io import Loader
 from .representation import PointCloud
 from .layers import *
 from .models import *
+from .datasets import *

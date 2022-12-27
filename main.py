@@ -15,20 +15,28 @@ import tensorflow as tf
 
 if __name__ == '__main__':
 
-    # inputs = tf.keras.Input(shape=(256, 3))
+    inputs = tf.keras.Input(shape=(2048, 3))
+    fps = t3d.layers.FPS(name='FPS', samples=1024)(inputs)
     # pnet = t3d.models.PointNet(name='pointnet').build(input_shape=(None, 3))
-    # model = tf.keras.models.Model(inputs=inputs, outputs=pnet)
-
+    model = tf.keras.models.Model(inputs=inputs, outputs=fps)
+    model.summary()
     # pnet.summary()
-
-    pcd = t3d.representation.PointCloud()
-    pcd = pcd.load('tensorflow3d/tests/formats/ascii/xyzi.txt', mode='xyzi')
+    # dataset = t3d.datasets.Kitti(path='tensorflow3d/assets/datasets/kitti', samples=100000)
+    # dataset.render('hello')
+    # dataset = dataset.build()
     #
-    # print(pcd.shape)
-    # pcd.sample(6912)
-    # pnet2 = t3d.models.PointNet2(name='pointnet++').build(input_shape=(None, 3))
-    #
-    # print("Inferencing")
-    # result = pnet2(tf.expand_dims(pcd.points, axis=0))
-    # pcd.points = result.numpy()[0, ...]
-    pcd.render(values=True)
+    # for d in dataset.take(1):
+    #     print(len(d[0]))
+    #     pcd = t3d.representation.PointCloud(points=d[1])
+    #     pcd.render()
+    # pcd = t3d.representation.PointCloud()
+    # pcd = pcd.load('tensorflow3d/tests/formats/ascii/xyzi.txt', mode='xyzi')
+    # #
+    # # print(pcd.shape)
+    # # pcd.sample(6912)
+    # # pnet2 = t3d.models.PointNet2(name='pointnet++').build(input_shape=(None, 3))
+    # #
+    # # print("Inferencing")
+    # # result = pnet2(tf.expand_dims(pcd.points, axis=0))
+    # # pcd.points = result.numpy()[0, ...]
+    # pcd.render(values=True)
